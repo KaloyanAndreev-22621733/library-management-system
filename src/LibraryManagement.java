@@ -1,10 +1,5 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 public class LibraryManagement {
     private List<Book> books;
@@ -68,11 +63,24 @@ public class LibraryManagement {
 
     public void usersAdd(String username, String password, boolean isAdmin){
      users.put(username, new User(username, password, isAdmin));
+     saveUserToFile(username,password,isAdmin);
+     System.out.println("User added successfully.");
     }
+
+    private void saveUserToFile(String username, String password, boolean isAdmin){
+        try(BufferedWriter bf = new BufferedWriter(new FileWriter("users.txt",true))){
+            bf.write(username + ", " + password + ", " + isAdmin);
+            bf.newLine();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
 
     public void usersRemove(String username){
         if(users.containsKey(username)){
             users.remove(username);
+            removeUserFromFile(username);
             System.out.println("User with username: " + username + " has been removed!");
         }
         else{
@@ -81,7 +89,68 @@ public class LibraryManagement {
 
     }
 
+    private void removeUserFromFile(String username){
+        try(BufferedReader br = new BufferedReader(new FileReader("users.txt"));
+        BufferedWriter bw = new BufferedWriter(new FileWriter("temp_users.txt"))){
+            String line;
+            while ((line = br.readLine()) != null){
+                String[] userdata = line.split(",");
+                if (!userdata[0].equals(username)) {
+                    bw.write(line);
+                    bw.newLine();
+                }
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
 
+    public void booksFind(String option, String optionString){
+        for (Book book : books) {
+            String value = "";
+            switch (option){
+                case "title":
+                    value = book.getTitle().toLowerCase();
+                    break;
+                case "author":
+                    value = book.getAuthor().toLowerCase();
+                    break;
+                case "tag":
+                    value = book.getKeywords().toLowerCase();
+                    break;
+            }
+            if (value.contains(optionString.toLowerCase())){
+                System.out.println(book.getTitle() + ", " + book.getAuthor() + ", " + book.getGenre() + ", " + book.getIsbn());
+            }
+        }
+    }
 
+    public void bookSort(String option, String order){
+        Comparator<Book> comparator = null;
+        switch (option){
+            case "title":
+                comparator = Comparator.comparing(Book::getTitle);
+                break;
+            case "author":
+                comparator = Comparator.comparing(Book::getAuthor);
+                break;
+            case "year":
+                comparator = Comparator.comparing(Book::getPublishingYear);
+                break;
+            case "rating":
+                comparator = Comparator.comparing(Book::getRating);
+                break;
+            default:
+        }
 
+        if (comparator != null){
+            if (order.equals("desc")){
+                comparator = comparator.reversed();
+            }
+            Collections.sort(books,comparator);
+            for (Book book : books) {
+                System.out.println(book.getTitle() + ", " + book.getAuthor() + ", " + book.getGenre() + ", " + book.getIsbn());
+            }
+        }
+    }
 }
