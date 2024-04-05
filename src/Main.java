@@ -12,8 +12,21 @@ public class Main {
 
             if (command.equals("exit")) {
                 break;
+            } else if (command.equals("open")) {
+                System.out.print("Enter filename: ");
+                String filename = scanner.nextLine().trim();
+                librarySystem.open(filename);
+            }else if (command.equals("save")) {
+                librarySystem.save();
+            } else if (command.equals("close")) {
+                librarySystem.close();
+            } else if (command.equals("saveas")) {
+                System.out.print("Enter filename: ");
+                String saveAsFilename = scanner.nextLine().trim();
+                librarySystem.saveAs(saveAsFilename);
+            } else if (command.equals("help")) {
+                librarySystem.help();
             }
-
             if (loggedIn || command.equals("login") || command.equals("open")) {
                 switch (command) {
                     case "login":
@@ -25,28 +38,12 @@ public class Main {
                             System.out.print("Enter password: ");
                             String password = scanner.nextLine().trim();
                             librarySystem.login(username, password);
-                            loggedIn = true;
+                            loggedIn = librarySystem.getLog();
                         }
                         break;
                     case "logout":
                         librarySystem.logout();
                         loggedIn = false;
-                        break;
-                    case "open":
-                        System.out.print("Enter filename: ");
-                        String filename = scanner.nextLine().trim();
-                        librarySystem.open(filename);
-                        break;
-                    case "save":
-                        librarySystem.save();
-                        break;
-                    case "close":
-                        librarySystem.close();
-                        break;
-                    case "saveas":
-                        System.out.print("Enter filename: ");
-                        String saveAsFilename = scanner.nextLine().trim();
-                        librarySystem.saveAs(saveAsFilename);
                         break;
                     case "books all":
                         librarySystem.allBooks();

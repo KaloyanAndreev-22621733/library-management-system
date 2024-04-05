@@ -1,5 +1,6 @@
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -8,6 +9,7 @@ public class LibraryManagement {
     private Map<String, User> users;
     private User currentUser;
     private String currentFile = null;
+    private boolean loggedIn;
 
     public LibraryManagement(){
         this.books = new ArrayList<>();
@@ -43,6 +45,24 @@ public class LibraryManagement {
             e.printStackTrace();
         }
     }
+
+    public void loadUsersFromFile(String file){
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 3) {
+                    String username = parts[0].trim();
+                    String password = parts[1].trim();
+                    users.put(username, new User(username, password,false));
+                }
+            }
+            //System.out.println("Users loaded successfully from " + file);
+        } catch (IOException e) {
+            System.out.println("Error loading users from file: " + e.getMessage());
+        }
+    }
+
     public void close() {
         currentFile = null;
         System.out.println("Successfully closed the file.");
@@ -81,17 +101,21 @@ public class LibraryManagement {
         System.out.println("exit - exits the program");
     }
     public void login(String username, String password){
+        loadUsersFromFile("users.txt");
         if (users.containsKey(username)) {
             if (users.get(username).getPassword().equals(password)) {
                 currentUser = users.get(username);
                 System.out.println("Welcome, " + username + "!");
+                loggedIn = true;
             }
             else{
                 System.out.println("Wrong password!");
+                loggedIn = false;
             }
         }
         else{
             System.out.println("Wrong username!");
+            loggedIn = false;
         }
     }
 
@@ -123,8 +147,20 @@ public class LibraryManagement {
 
     private void saveUserToFile(String username, String password, boolean isAdmin){
         try(BufferedWriter bf = new BufferedWriter(new FileWriter("users.txt",true))){
-            bf.write(username + ", " + password + ", " + isAdmin);
-            bf.newLine();
+            if (Files.exists(Paths.get("users.txt"))) {
+                bf.write(username + ", " + password + ", " + isAdmin);
+                bf.newLine();
+            }
+            else {
+                try {
+                    Files.createFile(Paths.get("users.txt"));
+                    currentFile = "users.txt";
+                    System.out.println("New file created: users.txt");
+                    saveUserToFile(username,password,isAdmin);
+                } catch (IOException e) {
+                    System.out.println("Error: Unable to create new file.");
+                }
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -206,5 +242,8 @@ public class LibraryManagement {
                 System.out.println(book.getTitle() + ", " + book.getAuthor() + ", " + book.getGenre() + ", " + book.getIsbn());
             }
         }
+    }
+    public boolean getLog(){
+        return loggedIn;
     }
 }
