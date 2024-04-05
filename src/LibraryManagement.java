@@ -1,16 +1,34 @@
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class LibraryManagement {
     private List<Book> books;
     private Map<String, User> users;
     private User currentUser;
+    private String currentFile = null;
 
     public LibraryManagement(){
         this.books = new ArrayList<>();
         this.users = new HashMap<>();
         this.users.put("admin",new User("admin","i<3c++",true));
         this.currentUser = null;
+    }
+    public void open(String filename) {
+        if (Files.exists(Paths.get(filename))) {
+            currentFile= filename;
+            System.out.println("Successfully opened " + filename);
+            loadBooks(filename);
+        } else {
+            try {
+                Files.createFile(Paths.get(filename));
+                currentFile = filename;
+                System.out.println("New file created: " + filename);
+            } catch (IOException e) {
+                System.out.println("Error: Unable to create new file.");
+            }
+        }
     }
 
     public void loadBooks(String filename){
@@ -25,7 +43,43 @@ public class LibraryManagement {
             e.printStackTrace();
         }
     }
+    public void close() {
+        currentFile = null;
+        System.out.println("Successfully closed the file.");
+    }
 
+    public void save() {
+        if (currentFile != null) {
+            writeToFile(currentFile);
+            System.out.println("Successfully saved " + currentFile);
+        } else {
+            System.out.println("No file is currently open.");
+        }
+    }
+
+    public void saveAs(String filename) {
+        currentFile = filename;
+        writeToFile(filename);
+        System.out.println("Successfully saved as " + filename);
+    }
+
+    private void writeToFile(String filename) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            // Write data to file
+        } catch (IOException e) {
+            System.out.println("Error: Unable to save file.");
+        }
+    }
+
+    public void help() {
+        System.out.println("The following commands are supported:");
+        System.out.println("open <file> - opens <file>");
+        System.out.println("close - closes currently opened file");
+        System.out.println("save - saves the currently open file");
+        System.out.println("saveas <file> - saves the currently open file in <file>");
+        System.out.println("help - prints this information");
+        System.out.println("exit - exits the program");
+    }
     public void login(String username, String password){
         if (users.containsKey(username)) {
             if (users.get(username).getPassword().equals(password)) {

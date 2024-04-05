@@ -1,0 +1,3 @@
+Stephen King,The Shining,Horror,A novel about a family who experiences supernatural occurrences at a haunted hotel.,1977,horror,4.5,1124
+George Orwell,1984,Dystopian,A dystopian novel set in a totalitarian regime where freedom of thought is suppressed.,1949,dystopian,4.8,2211
+J.K. Rowling,Harry Potter and the Philosopher's Stone,Fantasy,The first book in the Harry Potter series, following the journey of a young wizard.,1997,fantasy,magic,4.9,3345
