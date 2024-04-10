@@ -21,7 +21,13 @@ public class LibraryManagement {
         if (Files.exists(Paths.get(filename))) {
             currentFile= filename;
             System.out.println("Successfully opened " + filename);
-            loadBooks(filename);
+            switch (filename){
+                case "books.txt":
+                    loadBooks(filename);
+                case "users.txt":
+                    loadUsersFromFile(filename);
+            }
+            //loadBooks(filename);
         } else {
             try {
                 Files.createFile(Paths.get(filename));
@@ -70,7 +76,7 @@ public class LibraryManagement {
 
     public void save() {
         if (currentFile != null) {
-            writeToFile(currentFile);
+            saveFile(currentFile);
             System.out.println("Successfully saved " + currentFile);
         } else {
             System.out.println("No file is currently open.");
@@ -78,16 +84,43 @@ public class LibraryManagement {
     }
 
     public void saveAs(String filename) {
-        currentFile = filename;
-        writeToFile(filename);
-        System.out.println("Successfully saved as " + filename);
+        //currentFile = filename;
+        File file = new File(currentFile);
+        if (file.exists()) {
+            // Rename the existing file before creating a new one
+
+            File renamedFile = new File(filename);
+            if (file.renameTo(renamedFile)) {
+                System.out.println("Existing file renamed to: " + filename);
+            } else {
+                System.out.println("Error: Unable to rename existing file.");
+                return;
+            }
+        }
+        else{
+            try {
+                file.createNewFile();
+                System.out.println("File saved as: " + filename);
+            } catch (IOException e) {
+                System.out.println("Error: Unable to save file.");
+                e.printStackTrace();
+            }
+        }
+
     }
 
-    private void writeToFile(String filename) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
-            // Write data to file
+    private void saveFile(String filename) {
+        File file = new File(filename);
+        try {
+            if (file.exists()) {
+                System.out.println("File already exists. Overwriting...");
+
+            }
+            file.createNewFile();
+            System.out.println("File saved as: " + filename);
         } catch (IOException e) {
             System.out.println("Error: Unable to save file.");
+            e.printStackTrace();
         }
     }
 
@@ -192,6 +225,12 @@ public class LibraryManagement {
             }
         }catch (IOException e){
             e.printStackTrace();
+        }
+
+        File originalFile = new File("users.txt");
+        File tempFile = new File("temp_users.txt");
+        if (!tempFile.renameTo(originalFile)) {
+            System.out.println("Error: Unable to rename temp file to original file.");
         }
     }
 

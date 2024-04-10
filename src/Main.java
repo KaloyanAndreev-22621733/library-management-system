@@ -92,4 +92,22 @@ public class Main {
 
         scanner.close();
     }
+    //За скриване на символите за парола
+    private static String hideInput() {
+        StringBuilder input = new StringBuilder();
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            // Read a single character from the console
+            char c = scanner.next().charAt(0);
+            // Break if the user hits Enter
+            if (c == '\n' || c == '\r') {
+                break;
+            }
+            // Append asterisk (*) to the input
+            input.append('*');
+            // Print asterisk (*) to console
+            System.out.print('*');
+        }
+        return input.toString();
+    }
 }
