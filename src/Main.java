@@ -1,3 +1,4 @@
+import java.io.Console;
 import java.util.Scanner;
 
 public class Main {
@@ -5,6 +6,11 @@ public class Main {
         LibraryManagement librarySystem = new LibraryManagement();
         Scanner scanner = new Scanner(System.in);
         boolean loggedIn = false;
+        Console c = System.console();
+        if (c == null) {
+            System.out.println("Console null");
+            System.exit(0);
+        }
 
         while (true) {
             System.out.print("Enter command: ");
@@ -93,21 +99,5 @@ public class Main {
         scanner.close();
     }
     //За скриване на символите за парола
-    private static String hideInput() {
-        StringBuilder input = new StringBuilder();
-        Scanner scanner = new Scanner(System.in);
-        while (true) {
-            // Read a single character from the console
-            char c = scanner.next().charAt(0);
-            // Break if the user hits Enter
-            if (c == '\n' || c == '\r') {
-                break;
-            }
-            // Append asterisk (*) to the input
-            input.append('*');
-            // Print asterisk (*) to console
-            System.out.print('*');
-        }
-        return input.toString();
-    }
+
 }

@@ -22,9 +22,9 @@ public class LibraryManagement {
             currentFile= filename;
             System.out.println("Successfully opened " + filename);
             switch (filename){
-                case "books.txt":
+                case "books.xml":
                     loadBooks(filename);
-                case "users.txt":
+                case "users.xml":
                     loadUsersFromFile(filename);
             }
             //loadBooks(filename);
@@ -134,7 +134,7 @@ public class LibraryManagement {
         System.out.println("exit - exits the program");
     }
     public void login(String username, String password){
-        loadUsersFromFile("users.txt");
+        loadUsersFromFile("users.xml");
         if (users.containsKey(username)) {
             if (users.get(username).getPassword().equals(password)) {
                 currentUser = users.get(username);
@@ -179,16 +179,16 @@ public class LibraryManagement {
     }
 
     private void saveUserToFile(String username, String password, boolean isAdmin){
-        try(BufferedWriter bf = new BufferedWriter(new FileWriter("users.txt",true))){
-            if (Files.exists(Paths.get("users.txt"))) {
+        try(BufferedWriter bf = new BufferedWriter(new FileWriter("users.xml",true))){
+            if (Files.exists(Paths.get("users.xml"))) {
                 bf.write(username + ", " + password + ", " + isAdmin);
                 bf.newLine();
             }
             else {
                 try {
-                    Files.createFile(Paths.get("users.txt"));
-                    currentFile = "users.txt";
-                    System.out.println("New file created: users.txt");
+                    Files.createFile(Paths.get("users.xml"));
+                    currentFile = "users.xml";
+                    System.out.println("New file created: users.xml");
                     saveUserToFile(username,password,isAdmin);
                 } catch (IOException e) {
                     System.out.println("Error: Unable to create new file.");
@@ -213,7 +213,7 @@ public class LibraryManagement {
     }
 
     private void removeUserFromFile(String username){
-        try(BufferedReader br = new BufferedReader(new FileReader("users.txt"));
+        try(BufferedReader br = new BufferedReader(new FileReader("users.xml"));
         BufferedWriter bw = new BufferedWriter(new FileWriter("temp_users.txt"))){
             String line;
             while ((line = br.readLine()) != null){
@@ -227,7 +227,7 @@ public class LibraryManagement {
             e.printStackTrace();
         }
 
-        File originalFile = new File("users.txt");
+        File originalFile = new File("users.xml");
         File tempFile = new File("temp_users.txt");
         if (!tempFile.renameTo(originalFile)) {
             System.out.println("Error: Unable to rename temp file to original file.");
